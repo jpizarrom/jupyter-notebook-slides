@@ -10,6 +10,6 @@ git checkout -B gh-pages
 cp -r /tmp/workspace/* .
 git add -A .
 git commit -m "new version"
-git push origin master gh-pages
+git push origin master gh-pages -f
 git checkout master
 rm -rf /tmp/workspace
