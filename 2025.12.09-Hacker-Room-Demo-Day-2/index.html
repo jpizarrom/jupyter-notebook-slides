@@ -1,0 +1,279 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Reinforcement Learning with Action Chunking & Human-in-the-Loop in LeRobot</title>
+
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css">
+		<!-- 
+		<style>
+			.reveal h1 { font-size: 1.6em; }
+			.reveal h2 { font-size: 1.2em; }
+		</style>
+		-->
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-markdown data-separator-vertical="^\r?\n--\r?\n$">
+					<textarea data-template>
+# Reinforcement Learning with Action Chunking & Human-in-the-Loop in LeRobot
+
+Juan Pizarro
+
+https://linkedin.com/in/jpizarrom/
+
+<small>Hacker Room Demo Day - Dec 2025</small>
+
+---
+[Juan Pizarro](https://linkedin.com/in/jpizarrom/)
+
+- Learning and experimenting with RL & Robotics
+- Former (Selected):
+  - MLE @ [Holocene](https://holocene.eu/)
+  - SWE @ [FlixMobility](https://flixbus.com/)
+  - Master's in AI @ [Universitat Politècnica de València](https://www.upv.es/estudios/master/muiarfid/)
+  - Lead Software Engineer @ [Admetricks](https://admetricks.com/) <small>recently acquired by Similarweb</small></small>
+  - Lead Software Engineer @ [A-Dedo](https://allrideapp.com/)
+  - Computer Science Engineer @ [Universidad de Talca](https://www.utalca.cl/en/)
+
+---
+
+# HIL-SERL on LeRobot Jun 2025
+<img src="hilserl-main-figure.png" alt="HIL-SERL workflow, Luo et al. 2024" width="80%">
+<small>HIL-SERL: Precise and Dexterous Robotic Manipulation via Human-in-the-Loop Reinforcement Learning (Oct 2024) https://arxiv.org/abs/2410.21845</small>
+
+---
+
+# Push Cube: HIL-SERL SAC
+
+<video controls muted autoplay loop>
+    <source src="push-cube-slides.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+--
+
+Top 10 at Hugging Face LeRobot Worldwide Hackathon.
+
+**Task:**
+- Push cylinder into target & retract without disturbing it. Avoid excessive force on boundary tape.
+
+**Methodology:**
+- **Algorithm:** HIL-SERL (SAC) on SO-100 Arms.
+- **Training:** 40 episodes, 80k steps (~10k seconds).
+
+--
+
+**Outcome:**
+- Model learned to handle physical constraints.
+- Successfully completed the sequence autonomously.
+
+---
+
+# Flow Q-Learning & Action Chunking (ACFQL)
+
+
+<img src="flow-q-learning.png" alt="Flow Q-learning diagram" width="70%">
+<small>Flow Q-Learning (Feb 2025) https://arxiv.org/abs/2502.02538</small>
+
+---
+
+# Reinforcement Learning with Action Chunking
+
+
+<img src="q-chunking.png" alt="Reinforcement Learning with Action Chunking diagram" width="55%">
+<small>Reinforcement Learning with Action Chunking (Jul 2025) https://arxiv.org/abs/2507.07969</small>
+
+---
+
+# ACFQL Pick-and-Place
+
+<video controls muted autoplay loop>
+    <source src="pick-and-place-cube-slides.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+--
+
+**Goal:** Pick up cubes and place them in a designated area.
+
+**Methodology:** QC-FQL (ACFQL) in LeRobot via WSRL (Offline -> Online).
+
+**Training:**
+1. **Offline:** 40 demos (1 cube).
+2. **Online:** 3 phases (1 -> 2 -> 3-4 cubes).
+
+--
+
+**Key Learnings:**
+- Frequent human interventions required.
+- Adjusted end-effector bounds/gripper orientation improved stability.
+
+---
+
+# ACFQL on Franka arm
+
+<video controls muted autoplay loop>
+    <source src="pick-and-place-franka-slides.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+--
+
+**Event:** Humanoid Manipulation & AI Hackathon, Munich.
+
+**Methodology:**
+- **Setup:** Defined safety limits (virtual fence).
+- **Training:** Overnight offline training (40 demos) + Online HIL interventions.
+
+--
+
+**Achievement:** Integrated Franka arms into ACFQL in LeRobot in **3 days**.
+
+**Outcome:**
+- Trained pick-and-place policy on industrial hardware in hackathon timeframe.
+
+---
+
+# ACFQL + gripper rotation 7d
+
+<video controls muted autoplay loop>
+    <source src="pick-and-place-cube-rotation-slides.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+--
+
+**Behavior:** Policy rotates gripper to align with cube geometry.
+
+**Configuration:**
+- **Input:** 2 Cameras (128x128), Proprioception.
+- **Teleop:** Gamepad with delta actions.
+
+**Training:**
+- **Offline:** 400 successful episodes
+- **Online:** 5k transitions, 5k steps at 1.4Hz.
+
+---
+
+# Multi-Stage Pick-and-Place
+
+<video controls muted autoplay loop width="80%">
+    <source src="pick-and-place-close-drawer-slides.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+--
+
+**Task:** Pick object -> Place in drawer -> Close drawer.
+
+**Training:**
+- **Offline:** 160 episodes, 1M steps.
+- **Online:** 100k steps at 8.5Hz (~132k transitions).
+
+**Refinement:**
+- Interventions focused on "closing" motion and precise grasping.
+
+---
+
+# Pick-and-Place and Stacking
+
+<video controls muted autoplay loop>
+    <source src="pick-and-place-grocery-slides.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+--
+
+**Task:** Stack two cubes with text facing outward (40s horizon).
+
+**Iterative Pipeline:**
+1. **Teleop:** 100 demos.
+2. **Teleop:** 200 demos.
+3. **Offline RL:** Trained initial policies.
+4. **Online RL:** Generated 181 additional successful episodes via interventions.
+5. **Offline RL:** Combined 381 episodes.
+6. **Online RL:** Further refinements.
+
+--
+
+**Outcome:** Iterative RL
+- Demo -> Offline -> Online -> Offline -> Online
+- increase dataset progressively with policy rollouts with interventions.
+- demonstrations and initial interventions using leader SO101 arm.
+- Transitioned to gamepad teleop when interventions became simpler.
+
+---
+
+# VLA and RECAP-style Advantage Signals as BC
+
+<video controls muted autoplay loop>
+    <source src="pick-and-place-grocery-vla-slides.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+<small><small>Inspired on π∗0.6: a VLA That Learns From Experience (Nov 2025) https://arxiv.org/pdf/2511.14759</small></small>
+
+--
+
+**Experiment:** VLA model as Behavior Cloning actor in ACFQL + HIL-SERL.
+
+**Methodology:**
+- **Actor:** SmolVLA finetuned with **RECAP-style advantage signals**.
+
+--
+
+**Results:**
+- **Efficiency:** Improved behavior after just **10k optimization steps**.
+- **Insight:** Pretrained knowledge accelerates learning vs learning from scratch.
+- **Distillation:** VLA (BC) guided policy learning.
+
+---
+
+# References
+
+<small>https://github.com/huggingface/lerobot</small>
+
+<small>https://huggingface.co/docs/lerobot/hilserl</small>
+
+<small>HIL-SERL: Precise and Dexterous Robotic Manipulation via Human-in-the-Loop Reinforcement Learning (Oct 2024) https://arxiv.org/abs/2410.21845</small>
+
+<small>Flow Q-Learning (Feb 2025) https://arxiv.org/abs/2502.02538</small>
+
+<small>Reinforcement Learning with Action Chunking (Jul 2025) https://arxiv.org/abs/2507.07969</small>
+
+<small>π∗0.6: a VLA That Learns From Experience (Nov 2025) https://arxiv.org/pdf/2511.14759</small>
+
+<small>WSRL: Efficient Online Reinforcement Learning Fine-Tuning Need Not Retain Offline Data https://arxiv.org/abs/2412.07762</small>
+
+<small>[HIL-SERL] Add Flow Q-learning (FQL) agent with action chunking https://github.com/huggingface/lerobot/pull/1818 [refactored by s1lent4gnt to follow paper more strictly](https://github.com/s1lent4gnt) </small>
+
+					</textarea>
+				</section>
+			</div>
+		</div>
+
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/markdown/markdown.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+			  	width: 1920,
+  				height: 1200,
+				hash: true,
+				plugins: [ RevealMarkdown, RevealHighlight ]
+			});
+		</script>
+	</body>
+</html>
