@@ -46,7 +46,7 @@ https://linkedin.com/in/jpizarrom/
 
 ---
 
-# HIL-SERL on LeRobot Jun 2025
+# LeRobot merged HIL-SERL Jun 2025
 <img src="hilserl-main-figure.png" alt="HIL-SERL workflow, Luo et al. 2024" width="80%">
 <small>HIL-SERL: Precise and Dexterous Robotic Manipulation via Human-in-the-Loop Reinforcement Learning (Oct 2024) https://arxiv.org/abs/2410.21845</small>
 
@@ -108,18 +108,29 @@ Top 10 at Hugging Face LeRobot Worldwide Hackathon.
 **Methodology:** QC-FQL (ACFQL) in LeRobot via WSRL (Offline -> Online).
 
 **Training:**
-1. **Offline:** 40 demos (1 cube).
-2. **Online:** 3 phases (1 -> 2 -> 3-4 cubes).
+- **Offline:** 100k optimization on 40 successful episodes
+- **Online:** 3 phases
+  - pick one cube:
+    - 12k optimization steps online at 0.7Hz: 
+    - 781 episodes, 126422 transitions
+  - pick two cubes:
+    - 12k optimization steps online at 0.7Hz
+    - 449 episodes, 130000 transitions
+  - pick three and four cubes:
+    - 12k optimization steps online at 0.7Hz
+    - 522 episodes, 127103 transitions
 
 --
 
-**Key Learnings:**
-- Frequent human interventions required.
-- Adjusted end-effector bounds/gripper orientation improved stability.
+**Notes:**
+- Frequent human interventions required needed.
+- Switched teleop from leader arm to keyboard
+- Changed gripper orientation multiple times
+- Adjusted end_effector_bounds, end_effector_step_sizes, and fixed_reset_joint_positions during online finetuning many times
 
 ---
 
-# ACFQL on Franka arm
+# ACFQL on Franka arm 8d
 
 <video controls muted autoplay loop>
     <source src="pick-and-place-franka-slides.mp4" type="video/mp4">
@@ -133,6 +144,7 @@ Top 10 at Hugging Face LeRobot Worldwide Hackathon.
 **Methodology:**
 - **Setup:** Defined safety limits (virtual fence).
 - **Training:** Overnight offline training (40 demos) + Online HIL interventions.
+- **Teleop:** Keyboard with delta actions.
 
 --
 
@@ -159,12 +171,19 @@ Top 10 at Hugging Face LeRobot Worldwide Hackathon.
 - **Teleop:** Gamepad with delta actions.
 
 **Training:**
-- **Offline:** 400 successful episodes
-- **Online:** 5k transitions, 5k steps at 1.4Hz.
+- **Offline:**
+  - 400 successful episodes
+  - 500k optimization steps
+- **Online:**
+  - 5k initial transitions from the offline RL policy
+  - no offline data is used during online RL
+  - 5k optimization steps at 1.4hz
+
+<small>[s1lent4gnt](https://github.com/s1lent4gnt) refactored ACFQL to follow the paper's code more strictly and improved training speed</small>
 
 ---
 
-# Multi-Stage Pick-and-Place
+# Multi-Stage Pick-and-Place 20FPS
 
 <video controls muted autoplay loop width="80%">
     <source src="pick-and-place-close-drawer-slides.mp4" type="video/mp4">
@@ -176,11 +195,14 @@ Top 10 at Hugging Face LeRobot Worldwide Hackathon.
 **Task:** Pick object -> Place in drawer -> Close drawer.
 
 **Training:**
-- **Offline:** 160 episodes, 1M steps.
-- **Online:** 100k steps at 8.5Hz (~132k transitions).
-
-**Refinement:**
-- Interventions focused on "closing" motion and precise grasping.
+- **Offline:**
+  - 160 successful episodes
+  - trained for 500k optimization steps
+- **Online:**
+  - 5k initial transitions from the offline RL policy
+  - 100k optimization steps at 8.5hz
+  - 298 episodes, 132153 transitions
+  - Interventions focused on "closing" motion and precise grasping.
 
 ---
 
@@ -196,12 +218,15 @@ Top 10 at Hugging Face LeRobot Worldwide Hackathon.
 **Task:** Stack two cubes with text facing outward (40s horizon).
 
 **Iterative Pipeline:**
-1. **Teleop:** 100 demos.
-2. **Teleop:** 200 demos.
-3. **Offline RL:** Trained initial policies.
-4. **Online RL:** Generated 181 additional successful episodes via interventions.
-5. **Offline RL:** Combined 381 episodes.
-6. **Online RL:** Further refinements.
+- **Teleop:** 100 demos with leader SO101 arm.
+- **Teleop:** 100 more demos with leader SO101 arm.
+- **Offline RL:** Trained initial policy on 200 demos.
+- **Online RL:**
+  - Interventions with SO100 arm and gamepad teleop.
+  - Generated 181 additional successful episodes
+- **Offline RL:** Combined 381 episodes.
+- **Online RL:** Further refinements.
+  - Interventions gamepad teleop.
 
 --
 
@@ -215,23 +240,22 @@ Top 10 at Hugging Face LeRobot Worldwide Hackathon.
 
 # VLA and RECAP-style Advantage Signals as BC
 
-<video controls muted autoplay loop>
+<video controls muted autoplay loop width="25%">
     <source src="pick-and-place-grocery-vla-slides.mp4" type="video/mp4">
     Your browser does not support the video tag.
 </video>
 
-<small><small>Inspired on π∗0.6: a VLA That Learns From Experience (Nov 2025) https://arxiv.org/pdf/2511.14759</small></small>
+<small>Inspired on π∗0.6: a VLA That Learns From Experience (Nov 2025) https://arxiv.org/pdf/2511.14759</small>
 
 --
 
 **Experiment:** VLA model as Behavior Cloning actor in ACFQL + HIL-SERL.
 
 **Methodology:**
-- **Actor:** SmolVLA finetuned with **RECAP-style advantage signals**.
+- **BC Actor:** SmolVLA finetuned with **RECAP-style advantage signals**.
 
---
 
-**Results:**
+**Work in Progress:**
 - **Efficiency:** Improved behavior after just **10k optimization steps**.
 - **Insight:** Pretrained knowledge accelerates learning vs learning from scratch.
 - **Distillation:** VLA (BC) guided policy learning.
