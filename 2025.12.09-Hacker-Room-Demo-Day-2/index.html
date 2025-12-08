@@ -256,6 +256,14 @@ Top 10 at Hugging Face LeRobot Worldwide Hackathon.
 
 
 **Work in Progress:**
+- Train value net with return to go/MC returns, continous V(s) estimates.
+- Train a critic with Q-Chunking: Q(s_t, a_t ... a_t+H)
+- Calculate advantages for A(s,a) = Q(s,a) - V(s)
+- Label Dropout: Randomly set ~10% of labels to null to learn unconditional distribution for BC/VLA
+- Guided denoise from CFG (conditional (good) path) for distilling VLA/BC into the one-step actor
+- QWR on the one-step actor with Flow Q-learning
+
+**Preliminary Results:**
 - **Efficiency:** Improved behavior after just **10k optimization steps**.
 - **Insight:** Pretrained knowledge accelerates learning vs learning from scratch.
 - **Distillation:** VLA (BC) guided policy learning.
