@@ -296,6 +296,30 @@ Top 10 at Hugging Face LeRobot Worldwide Hackathon.
 
 ---
 
+# Learnings
+
+**Buffer Management:**
+- Single replay buffer initialized with offline policy rollouts + interventions
+- Policy autonomy maximized during warm-start (requires strong initial model: 200-400 episodes)
+- Latest experiments: successful episodes only for warm-start (vs. mixed success/failure previously)
+
+**Online RL Session Strategy:**
+- Multiple sequential sessions (max 120k-240k transitions)
+- Buffer reset between sessions with fresh warm-start from latest policy
+- Challenge: Larger buffers → delayed correction effects due to random sampling
+
+**Iterative Training Pipeline:**
+- Demo → Offline RL → Online RL → Offline RL (incremental dataset growth)
+- Successful online episodes integrated into offline dataset
+- Reduced sequential online sessions, increased dataset progressively
+
+**Intervention Evolution:**
+- Early sessions: SO101 arm for complex interventions
+- Later sessions: Gamepad teleop for simpler, cleaner interventions
+- Warm-start transitions increased: 5k → 10k for better initialization
+
+---
+
 # References
 
 <small>https://github.com/huggingface/lerobot</small>
@@ -317,6 +341,7 @@ Top 10 at Hugging Face LeRobot Worldwide Hackathon.
 <small>UCBerkeley CS 285: Deep Reinforcement Learning 2023 (UC Berkeley) https://www.youtube.com/playlist?list=PL_iWQOsE6TfVYGEGiAOMaOzzv41Jfm_Ps</small>
 
 <small>Robot Learning 2025: Foundational Models for Robotics and Scaling DeepRL https://www.youtube.com/playlist?list=PLMe2pHxzxHp-UJ1jd-uuGSGK7P7Phtm-f</small>
+
 
 					</textarea>
 				</section>
